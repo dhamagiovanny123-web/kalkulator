@@ -8,16 +8,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const multiplyBtn = document.getElementById('multiplyBtn');
     const divideBtn = document.getElementById('divideBtn');
 
+    // Validate input function
+    function isValidNumber(value) {
+        // Check if value is empty
+        if (value.trim() === '') {
+            return false;
+        }
+        // Check if value contains only numbers, decimal point, and minus sign
+        const numberRegex = /^-?\d*\.?\d+$/;
+        return numberRegex.test(value.trim()) && !isNaN(parseFloat(value));
+    }
+
     // Calculate result
     function calculate(operation) {
-        const num1 = parseFloat(num1Input.value);
-        const num2 = parseFloat(num2Input.value);
+        const input1 = num1Input.value;
+        const input2 = num2Input.value;
         
-        // Check if inputs are valid numbers
-        if (isNaN(num1) || isNaN(num2)) {
+        // Check if inputs are empty
+        if (input1.trim() === '' || input2.trim() === '') {
             showError('Input tidak valid. harap masukkan angka yang benar!');
             return;
         }
+        
+        // Check if inputs are valid numbers
+        if (!isValidNumber(input1) || !isValidNumber(input2)) {
+            showError('Input tidak valid. harap masukkan angka yang benar!');
+            return;
+        }
+
+        const num1 = parseFloat(input1);
+        const num2 = parseFloat(input2);
 
         let result;
         let operatorSymbol;
@@ -71,11 +91,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     }
 
+    // Real-time validation for inputs
+    function validateInput(input) {
+        const value = input.value;
+        if (value !== '' && !isValidNumber(value)) {
+            input.style.borderColor = '#ff0000';
+            input.style.backgroundColor = '#ffe6e6';
+        } else {
+            input.style.borderColor = '';
+            input.style.backgroundColor = '';
+        }
+    }
+
     // Event listeners
     addBtn.addEventListener('click', () => calculate('add'));
     subtractBtn.addEventListener('click', () => calculate('subtract'));
     multiplyBtn.addEventListener('click', () => calculate('multiply'));
     divideBtn.addEventListener('click', () => calculate('divide'));
+
+    // Real-time input validation
+    num1Input.addEventListener('input', () => validateInput(num1Input));
+    num2Input.addEventListener('input', () => validateInput(num2Input));
 
     // Keyboard support
     document.addEventListener('keydown', function(e) {
